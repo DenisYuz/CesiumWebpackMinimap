@@ -3,7 +3,7 @@
 This small exmple demonstrates the use of 2 synced maps (3D map and 2D mini map)
 I wrote this example based on cesium-webpack-example and cesium/Apps/Sandcastle/gallery/Multiple Synced Views.html
 
-![alt text](https://github.com/DenisYuz/CesiumWebpackMinimap/tree/master/src/assets/images/3DMapWith2DMinimap.png?raw=true)
+![alt text](https://github.com//DenisYuz//CesiumWebpackMinimap//tree//master//src//assets//images//3DMapWith2DMinimap.png?raw=true "Minimap Screenshot")
 
 # cesium-webpack-example
 
