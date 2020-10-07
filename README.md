@@ -1,3 +1,10 @@
+# CesiumWebpackMinimap
+@ Denis Yuzhelevsky.
+This small exmple demonstrates the use of 2 synced maps (3D map and 2D mini map)
+I wrote this example based on cesium-webpack-example and cesium/Apps/Sandcastle/gallery/Multiple Synced Views.html
+
+
+
 # cesium-webpack-example
 
 A minimal recommended setup for an applications using [Cesium](https://cesium.com) with [Webpack](https://webpack.js.org/concepts/).

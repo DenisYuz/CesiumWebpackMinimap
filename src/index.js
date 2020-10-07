@@ -62,7 +62,7 @@ function sync2DView() {
     // (try replacing `distance` in the line below with `1e7`. The view will still sync, but will have a constant zoom)
     view2D.scene.camera.lookAt(
         worldPosition,
-        new Cartesian3(0.0, 0.0, distance * 5)
+        new Cartesian3(0.0, 0.0, distance * 7)
     );
 }
 
