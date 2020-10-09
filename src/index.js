@@ -126,7 +126,7 @@ function sync2DView() {
     })
 
     view2D.entities.add({
-        name: "Blank blue pin",
+        name: "Center of the map",
         position: centerPosition,
         billboard: {
             image: new PinBuilder().fromColor(Color.YELLOW, 48).toDataURL(),
