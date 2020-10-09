@@ -16,12 +16,6 @@ import "./css/main.css";
 // a shared clock object that both views share
 var clockViewModel = new ClockViewModel();
 
-var options3D = {
-    fullscreenButton: false,
-    sceneModePicker: false,
-    clockViewModel: clockViewModel,
-};
-
 var options2D = {
     homeButton: false,
     fullscreenButton: false,
@@ -32,86 +26,47 @@ var options2D = {
     sceneMode: SceneMode.SCENE2D,
     navigationHelpButton: false,
     animation: false,
+    requestRenderMode: true,
+    maximumRenderTimeChange: Infinity
 };
 
+var options3D = {
+    fullscreenButton: false,
+    sceneModePicker: false,
+    clockViewModel: clockViewModel,
+    terrainProvider: createWorldTerrain(),
+    requestRenderMode: true,
+    maximumRenderTimeChange: Infinity
+};
 
 // We create two viewers, a 2D and a 3D one
 // The CSS is set up to place them side by side
-var view3D = new Viewer("view3D", options3D);
-var view2D = new Viewer("view2D", options2D);
+let view3D = new Viewer("view3D", options3D);
+let view2D = new Viewer("view2D", options2D);
+let toolbar = document.getElementById('toolbar');
+const ellipsoid = view3D.scene.globe.ellipsoid;
+window.ellipsoid = ellipsoid;
+view3D.scene.skyBox.show = false;
+view2D.scene.skyBox.show = false;
+
+var viewRectangle3D = new Rectangle();
+var viewCenter;
+var newCenterPosition;
+
+
 
 var centerPosition;
 var distance;
-
 window.view3D = view3D;
 window.view2D = view2D;
 
-function sync2DView() {
-    // The center of the view is the point that the 3D camera is focusing on
-    var viewCenter = new Cartesian2(
-        Math.floor(view3D.canvas.clientWidth / 2),
-        Math.floor(view3D.canvas.clientHeight / 2)
-    );
-    // Given the pixel in the center, get the world position
-    var newCenterPosition = view3D.scene.camera.pickEllipsoid(viewCenter);
-    if (defined(newCenterPosition)) {
-        // Guard against the case where the center of the screen
-        // does not fall on a position on the globe
-        centerPosition = newCenterPosition;
-        console.log(`New world position: ${newCenterPosition}`);
-    }
-    // Get the distance between the world position of the point the camera is focusing on, and the camera's world position
-    distance = Cartesian3.distance(
-        centerPosition,
-        view3D.scene.camera.positionWC
-    );
-    // Tell the 2D camera to look at the point of focus. The distance controls how zoomed in the 2D view is
-    // (try replacing `distance` in the line below with `1e7`. The view will still sync, but will have a constant zoom)
-    view2D.scene.camera.lookAt(
-        centerPosition,
-        new Cartesian3(0.0, 0.0, distance * 10)
-    );
+// A normal b3dm tileset of photogrammetry
+let tileset = new Cesium3DTileset({
+    url: IonResource.fromAssetId(40866),
+});
+view3D.scene.primitives.add(tileset);
+view3D.zoomTo(tileset);
 
-    let ellipsoid = view3D.scene.globe.ellipsoid;
-    var result = view3D.camera.pickEllipsoid(viewCenter, ellipsoid);
-    let viewRectangle3D = new Rectangle();
-    view3D.camera.computeViewRectangle(ellipsoid, viewRectangle3D);
-
-    console.log(`viewRectangle3D: ${viewRectangle3D}`);
-
-
-    var rect = view3D.camera.computeViewRectangle(ellipsoid, viewRectangle3D);
-
-    view2D.entities.removeAll();
-
-    view2D.entities.add({
-        rectangle: {
-            coordinates: viewRectangle3D,
-            material: Color.RED.withAlpha(0.5),
-            outline: true,
-            outlineColor: Color.BLACK,
-            outlineWidth: 2.0,
-        }
-    })
-
-    var pinIcon = view2D.entities.add({
-        name: "Blank blue pin",
-        position: centerPosition,
-        billboard: {
-            image: new PinBuilder().fromColor(Color.YELLOW, 48).toDataURL(),
-            verticalOrigin: VerticalOrigin.BOTTOM,
-        },
-    });
-
-    toolbar.innerHTML = '<pre>' +
-        'West: ' + CesiumMath.toDegrees(rect.west).toFixed(4) + '<br/>' +
-        'South: ' + CesiumMath.toDegrees(rect.south).toFixed(4) + '<br/>' +
-        'East: ' + CesiumMath.toDegrees(rect.east).toFixed(4) + '<br/>' +
-        'North: ' + CesiumMath.toDegrees(rect.north).toFixed(4) + '</pre>';
-
-    console.log(`West: ${CesiumMath.toDegrees(rect.west).toFixed(4)}`)
-
-}
 
 // Apply our sync function every time the 3D camera view changes
 view3D.camera.changed.addEventListener(sync2DView);
@@ -128,17 +83,76 @@ view2D.scene.screenSpaceCameraController.enableTilt = false;
 view2D.scene.screenSpaceCameraController.enableLook = false;
 
 
+function sync2DView() {
+    // The center of the view is the point that the 3D camera is focusing on
+    viewCenter = new Cartesian2(
+        Math.floor(view3D.canvas.clientWidth / 2),
+        Math.floor(view3D.canvas.clientHeight * 2 / 3)
+    );
+    // Given the pixel in the center, get the world position
+    newCenterPosition = view3D.scene.camera.pickEllipsoid(viewCenter);
+    window.newCenterPosition = newCenterPosition;
+    if (defined(newCenterPosition)) {
+        // Guard against the case where the center of the screen
+        // does not fall on a position on the globe
+        centerPosition = newCenterPosition;
+    }
+    // Get the distance between the world position of the point the camera is focusing on, and the camera's world position
+    distance = Cartesian3.distance(
+        centerPosition,
+        view3D.scene.camera.positionWC
+    );
+    // Tell the 2D camera to look at the point of focus. The distance controls how zoomed in the 2D view is
+    // (try replacing `distance` in the line below with `1e7`. The view will still sync, but will have a constant zoom)
+    view2D.scene.camera.lookAt(
+        centerPosition,
+        new Cartesian3(0.0, 0.0, distance * 10)
+    );
 
-var extent = Rectangle.fromDegrees(-100, 20, -90, 30);
-Camera.DEFAULT_VIEW_RECTANGLE = extent;
-Camera.DEFAULT_VIEW_FACTOR = 0;
 
-// Scractch memory allocation, happens only once.
-var scratchRectangle = new Rectangle();
+    let rect = view3D.camera.computeViewRectangle(ellipsoid, viewRectangle3D);
+
+    view2D.entities.removeAll();
+
+    view2D.entities.add({
+        rectangle: {
+            coordinates: viewRectangle3D,
+            material: Color.RED.withAlpha(0.5),
+            outline: true,
+            outlineColor: Color.BLACK,
+            outlineWidth: 2.0,
+            minimumPixelSize: 128
+        }
+    })
+
+    view2D.entities.add({
+        name: "Blank blue pin",
+        position: centerPosition,
+        billboard: {
+            image: new PinBuilder().fromColor(Color.YELLOW, 48).toDataURL(),
+            verticalOrigin: VerticalOrigin.BOTTOM,
+        },
+    });
+
+    toolbar.innerHTML = '<pre>' +
+        'West: ' + CesiumMath.toDegrees(rect.west).toFixed(4) + '<br/>' +
+        'South: ' + CesiumMath.toDegrees(rect.south).toFixed(4) + '<br/>' +
+        'East: ' + CesiumMath.toDegrees(rect.east).toFixed(4) + '<br/>' +
+        'North: ' + CesiumMath.toDegrees(rect.north).toFixed(4) + '</pre>';
+}
+
+
+// setInterval(() => {
+//     view3d.scene.requestRender();
+// }, 1000);
+
+// var extent = Rectangle.fromDegrees(-100, 20, -90, 30);
+// Camera.DEFAULT_VIEW_RECTANGLE = extent;
+// Camera.DEFAULT_VIEW_FACTOR = 0;
 
 
 
-var toolbar = document.getElementById('toolbar');
+
 
 
 
