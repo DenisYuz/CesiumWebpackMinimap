@@ -45,7 +45,8 @@ module.exports = [{
                 { from: 'node_modules/cesium/Build/Cesium/Workers', to: 'Workers' },
                 { from: 'node_modules/cesium/Build/Cesium/ThirdParty', to: 'ThirdParty' },
                 { from: 'node_modules/cesium/Build/Cesium/Assets', to: 'Assets' },
-                { from: 'node_modules/cesium/Build/Cesium/Widgets', to: 'Widgets' }
+                { from: 'node_modules/cesium/Build/Cesium/Widgets', to: 'Widgets' },
+                { from: './src/assets', to: 'Assets' }
             ],
         }),
         new webpack.DefinePlugin({

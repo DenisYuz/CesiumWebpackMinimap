@@ -4,7 +4,9 @@ import {
     Cartesian2, Cartesian3, Camera, ClockViewModel, defined, Rectangle, StripeMaterialProperty, Color,
     Math as CesiumMath,
     VerticalOrigin,
-    PinBuilder
+    PinBuilder,
+    Transforms,
+    Model
 } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import "./css/main.css";
@@ -83,6 +85,17 @@ view2D.scene.screenSpaceCameraController.enableTilt = false;
 view2D.scene.screenSpaceCameraController.enableLook = false;
 
 
+var scene = view3D.scene;
+var modelMatrix = Transforms.eastNorthUpToFixedFrame(Cartesian3.fromDegrees(-120, 47, 10000.0));
+var drone_tileset = Model.fromGltf({
+    url: './Assets/simple-drone.glb',
+    modelMatrix: modelMatrix,
+    scale: 2.0
+});
+var model = scene.primitives.add(drone_tileset);
+//view3D.zoomTo(drone_tileset);
+
+
 function sync2DView() {
     // The center of the view is the point that the 3D camera is focusing on
     viewCenter = new Cartesian2(
@@ -151,7 +164,16 @@ function sync2DView() {
 // Camera.DEFAULT_VIEW_FACTOR = 0;
 
 
-
+window.setCameraView = function ({ x, y, z, headingAngle, pitchAngle, rollAngle }) {
+    view3D.camera.setView({
+        destination: new Cartesian3(x, y, z),
+        orientation: {
+            heading: headingAngle,
+            pitch: pitchAngle,
+            roll: rollAngle
+        }
+    })
+}
 
 
 
