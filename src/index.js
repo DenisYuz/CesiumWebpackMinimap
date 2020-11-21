@@ -6,7 +6,9 @@ import {
     VerticalOrigin,
     PinBuilder,
     Transforms,
-    Model
+    Model,
+    KmlDataSource,
+    HeadingPitchRoll
 } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import "./css/main.css";
@@ -62,12 +64,75 @@ var distance;
 window.view3D = view3D;
 window.view2D = view2D;
 
+var scene = view3D.scene;
+var modelMatrix = Transforms.eastNorthUpToFixedFrame(
+    Cartesian3.fromDegrees(34.53415396442325, 31.1633431264729, 0.0));
+
+var model = scene.primitives.add(Model.fromGltf({
+    url: './Assets/GroundVehicle.glb',
+    modelMatrix: modelMatrix,
+    scale: 20000.0
+}));
+//view3D.zoomTo(drone_tileset);
+
+// view3D.dataSources.add(KmlDataSource
+//     .load('./Assets/kml/building1/building1.kml', {
+//         camera: view3D.camera,
+//         canvas: view3D.canvas
+//     })
+// )
+//     .then(function (dataSource) {
+//         // view3D.flyTo(dataSource.entities._entyties._array[0]);
+//         // view3D.zoomTo(dataSource.entities._entyties._array[0])
+//     });
+
+
+var origin = Cartesian3.fromDegrees(34.53415396442325, 31.1633431264729, 0.0);
+modelMatrix = Transforms.eastNorthUpToFixedFrame(origin);
+var model_building = scene.primitives.add(Model.fromGltf({
+    url: './Assets/building1.glb',
+    modelMatrix: modelMatrix,
+    minimumPixelSize: 128,
+    maximumScale: 20
+}));
+
+view3D.entities.removeAll();
+
+var position = Cartesian3.fromDegrees(34.53415396442325, 31.1633431264729, 100.0);
+var heading = CesiumMath.toRadians(135);
+var pitch = 0;
+var roll = 0;
+var hpr = new HeadingPitchRoll(heading, pitch, roll);
+var orientation = Transforms.headingPitchRollQuaternion(position, hpr);
+
+
+var entity = view3D.entities.add({
+    name: './Assets/building1.glb',
+    position: position,
+    orientation: orientation,
+    model: {
+        uri: './Assets/building1.glb',
+        minimumPixelSize: 1,
+        maximumScale: 2000000000
+    }
+});
+view3D.trackedEntity = entity;
+view3D.flyTo(entity);
+
+
 // A normal b3dm tileset of photogrammetry
 let tileset = new Cesium3DTileset({
     url: IonResource.fromAssetId(40866),
 });
 view3D.scene.primitives.add(tileset);
-view3D.zoomTo(tileset);
+//view3D.zoomTo(tileset);
+
+view3D.entities.add({
+    position: Cartesian3.fromDegrees(35, 32, 0.0),
+    model: {
+        uri: './Assets/building1.glb'
+    }
+})
 
 
 // Apply our sync function every time the 3D camera view changes
@@ -85,15 +150,7 @@ view2D.scene.screenSpaceCameraController.enableTilt = false;
 view2D.scene.screenSpaceCameraController.enableLook = false;
 
 
-var scene = view3D.scene;
-var modelMatrix = Transforms.eastNorthUpToFixedFrame(Cartesian3.fromDegrees(-120, 47, 10000.0));
-var drone_tileset = Model.fromGltf({
-    url: './Assets/simple-drone.glb',
-    modelMatrix: modelMatrix,
-    scale: 2.0
-});
-var model = scene.primitives.add(drone_tileset);
-//view3D.zoomTo(drone_tileset);
+
 
 
 function sync2DView() {
@@ -147,11 +204,11 @@ function sync2DView() {
         },
     });
 
-    toolbar.innerHTML = '<pre>' +
-        'West: ' + CesiumMath.toDegrees(rect.west).toFixed(4) + '<br/>' +
-        'South: ' + CesiumMath.toDegrees(rect.south).toFixed(4) + '<br/>' +
-        'East: ' + CesiumMath.toDegrees(rect.east).toFixed(4) + '<br/>' +
-        'North: ' + CesiumMath.toDegrees(rect.north).toFixed(4) + '</pre>';
+    // toolbar.innerHTML = '<pre>' +
+    //     'West: ' + CesiumMath.toDegrees(rect.west).toFixed(4) + '<br/>' +
+    //     'South: ' + CesiumMath.toDegrees(rect.south).toFixed(4) + '<br/>' +
+    //     'East: ' + CesiumMath.toDegrees(rect.east).toFixed(4) + '<br/>' +
+    //     'North: ' + CesiumMath.toDegrees(rect.north).toFixed(4) + '</pre>';
 }
 
 

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?><kml xmlns='http://www.opengis.net/kml/2.2' xmlns:atom='http://www.w3.org/2005/Atom'>
+<Document>
+	<name>00adeab689754691bd671a0fdfd57b66.kmz</name>
+	<ExtendedData>
+		<Data name="uuid">
+			<value>00adeab689754691bd671a0fdfd57b66</value>
+		</Data>
+	</ExtendedData>
+	<Placemark>
+		<name>223</name>
+		<Model id="model_1">
+			<altitudeMode>relativeToGround</altitudeMode>
+			<Location>
+				<longitude>34.53415396442325</longitude>
+				<latitude>31.1633431264729</latitude>
+				<altitude>0</altitude>
+			</Location>
+			<Orientation>
+				<heading>33</heading>
+				<tilt>0</tilt>
+				<roll>0</roll>
+			</Orientation>
+			<Scale>
+				<x>1</x>
+				<y>1</y>
+				<z>1</z>
+			</Scale>
+			<Link>
+				<href>223.dae</href>
+			</Link>
+			<ResourceMap>
+				<Alias>
+					<targetHref>mat00.jpg</targetHref>
+					<sourceHref>223/mat00.jpg</sourceHref>
+				</Alias>
+				<Alias>
+					<targetHref>mat01.jpg</targetHref>
+					<sourceHref>223/mat01.jpg</sourceHref>
+				</Alias>
+				<Alias>
+					<targetHref>mat02.jpg</targetHref>
+					<sourceHref>223/mat02.jpg</sourceHref>
+				</Alias>
+				<Alias>
+					<targetHref>mat03.jpg</targetHref>
+					<sourceHref>223/mat03.jpg</sourceHref>
+				</Alias>
+				<Alias>
+					<targetHref>mat04.jpg</targetHref>
+					<sourceHref>223/mat04.jpg</sourceHref>
+				</Alias>
+				<Alias>
+					<targetHref>mat06.jpg</targetHref>
+					<sourceHref>223/mat06.jpg</sourceHref>
+				</Alias>
+				<Alias>
+					<targetHref>mat1.jpg</targetHref>
+					<sourceHref>223/mat1.jpg</sourceHref>
+				</Alias>
+				<Alias>
+					<targetHref>mat2.jpg</targetHref>
+					<sourceHref>223/mat2.jpg</sourceHref>
+				</Alias>
+			</ResourceMap>
+		</Model>
+	</Placemark>
+</Document>
+</kml>
