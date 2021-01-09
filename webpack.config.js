@@ -8,7 +8,7 @@ module.exports = [{
     mode: 'development',
     context: __dirname,
     entry: {
-        app: './src/index.js'
+        app: './src/index2.js'
     },
     output: {
         filename: '[name].js',

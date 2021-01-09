@@ -2,7 +2,7 @@
   "name": "cesium-webpack-example",
   "version": "1.0.0",
   "description": "The minimal recomended setup for an app using Cesium with Webpack.",
-  "main": "index.js",
+  "main": "index2.js",
   "keywords": [
     "cesium",
     "webpack",
